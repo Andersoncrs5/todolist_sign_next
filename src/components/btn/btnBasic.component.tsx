@@ -2,9 +2,9 @@ import Link from "next/link";
 import { clsx } from "clsx";
 import Types from './typeBtn';
 
-export default function Btn(props: Types) {
+export default function BtnBasic(props: Types) {
   const bg = `bg-${String(props.color)}`;
-  const hover: string = `hover:bg-${props.colorHover||'white'} hover:text-${props.colorTextHover||'black'}`;
+  const hover: string = `hover:bg-white hover:text-black`;
   const padding = `p-${String(props.padding||1)}`;
 
   return (
