@@ -6,8 +6,12 @@ import CreateUserDto from "./CreateUserDto.dto";
 import { AxiosResponse } from "axios";
 import { useRouter } from "next/navigation";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
+import { useRedirectIfAuthenticated } from "@/services/hooks/useRequireAuth";
+import ResponseToken from "@/services/resposes/ResponseTokens.response";
 
 export function useRegister() {
+    useRedirectIfAuthenticated()
+
     const router: AppRouterInstance = useRouter();
 
     const [name, setName] = useState<string>('');
@@ -20,6 +24,7 @@ export function useRegister() {
     const [alert, setAlert] = useState<boolean>(false);
 
     const [messageAlert, setMessageAlert] = useState<string>('');
+    const [messageForm, setMessageForm] = useState<boolean>(false);
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault()
@@ -32,11 +37,11 @@ export function useRegister() {
         }
 
         try {
-            const response: AxiosResponse<any, any> = await api.post('v1/auth/register', userDto)
-
+            const response: AxiosResponse<any, any> = await api.post<ResponseToken>('v1/auth/register', userDto);
+            
             if (response.status === 201) {
                 localStorage.setItem('token' , String(response.data.access_token))
-                localStorage.setItem('refresh_token' , String(response.data.access_refresh_token))
+                localStorage.setItem('refresh_token' , String(response.data.refresh_token))
                 localStorage.setItem('expireAtAccessToken', String(response.data.expireAtAccessToken))
                 localStorage.setItem('expireAtRefreshToken', String(response.data.expireAtRefreshToken))
 
@@ -49,7 +54,13 @@ export function useRegister() {
                 setMessageAlert(e.response.data)
             }
 
-            if(e.reponse.status === 400) {
+            if(e.response.status === 404) {
+                setError(e.response.data)
+                setMessageForm(true);
+                await disableAlert()
+            }
+
+            if(e.response.status === 400) {
                 setError(e.response.data.message)
                 setAlert(true);
                 await disableAlert()
@@ -64,12 +75,19 @@ export function useRegister() {
         } finally {
             setIsSubmitting(false)
             await clearInputs()
+            await disableMessageForm()
         }
     }
 
     async function disableAlert() {
         setTimeout(() => {
             setAlert(false)
+        }, 5000)
+    }
+
+    async function disableMessageForm() {
+        setTimeout(() => {
+            setMessageForm(false)
         }, 5000)
     }
 
@@ -87,6 +105,7 @@ export function useRegister() {
         password,
         isSubmitting,
         messageAlert,
+        messageForm,
         setMessageAlert,
         setAlert,
         setName,
@@ -94,6 +113,6 @@ export function useRegister() {
         setError,
         setPassword,
         handleSubmit,
-
+        setMessageForm,
     }
 }

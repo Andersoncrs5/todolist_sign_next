@@ -16,7 +16,9 @@ export default function Login() {
     isSubmitting,
     alert,
     error,
-    messageAlert
+    messageAlert,
+    messageForm,
+    setMessageForm
   } = useLogin();
 
   return (
@@ -26,7 +28,7 @@ export default function Login() {
     >
 
       {alert && <Alert name={messageAlert} /> }
-      {alert && <ErrorForm data={error} /> }
+      {messageForm && <ErrorForm data={error} /> }
 
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center shadow-md w-60%">

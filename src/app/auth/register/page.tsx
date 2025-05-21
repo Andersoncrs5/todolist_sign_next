@@ -7,7 +7,7 @@ import ErrorForm from '@/components/ErrorForm/ErrorForm.component';
 
 export default function Register() {
 
-  const { email, alert , error, messageAlert, setAlert, setError, setMessageAlert, isSubmitting, name, password, handleSubmit, setEmail, setName, setPassword } = useRegister();
+  const { email, alert , error, handleSubmit , setName , setEmail , setPassword, messageAlert, messageForm, isSubmitting, name, password } = useRegister();
 
   return (
     <div 
@@ -17,7 +17,7 @@ export default function Register() {
       <div className="flex items-center justify-center min-h-screen ">
         <div className="text-center shadow-md w-full max-w-md ">
           {alert && <Alert name={messageAlert} /> }
-          {alert && <ErrorForm data={error} /> }
+          {messageForm && <ErrorForm data={error} /> }
           <form onSubmit={handleSubmit}>
             <div className="p-3 border rounded">
               <CustomInput 

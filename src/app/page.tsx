@@ -1,7 +1,9 @@
+'use client'
 import BtnBasic from "@/components/btn/btnBasic.component";
-import Image from "next/image";
+import { useRequireAuth } from "@/services/hooks/useRequireAuth";
 
 export default function Home() {
+  useRequireAuth()
   return (
     <div 
       className="h-screen bg-cover bg-center bg-no-repeat"

@@ -4,8 +4,11 @@ import LoginUserDto from "./LoginUserDto.dto";
 import { AxiosResponse } from "axios";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { useRouter } from "next/navigation";
+import { useRedirectIfAuthenticated } from "@/services/hooks/useRequireAuth";
+import ResponseToken from "@/services/resposes/ResponseTokens.response";
 
 export function useLogin() {
+  useRedirectIfAuthenticated()
   const router: AppRouterInstance = useRouter();
   
   const [email, setEmail] = useState('');
@@ -16,6 +19,7 @@ export function useLogin() {
   const [alert, setAlert] = useState<boolean>(false);
 
   const [messageAlert, setMessageAlert] = useState<string>('');
+  const [messageForm, setMessageForm] = useState<boolean>(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -27,11 +31,12 @@ export function useLogin() {
     }
 
     try {
-      const response: AxiosResponse<any, any> = await api.post('v1/auth/login', data) 
+      const response: AxiosResponse<any, any> = await api.post<ResponseToken>('v1/auth/login', data) 
+      console.log(response)
 
       if (response.status === 200) {
         localStorage.setItem('token' , String(response.data.access_token))
-        localStorage.setItem('refresh_token' , String(response.data.access_refresh_token))
+        localStorage.setItem('refresh_token' , String(response.data.refresh_token))
         localStorage.setItem('expireAtAccessToken', String(response.data.expireAtAccessToken))
         localStorage.setItem('expireAtRefreshToken', String(response.data.expireAtRefreshToken))
 
@@ -39,9 +44,16 @@ export function useLogin() {
       }
 
     } catch (e: any) {
-      
-      if(e.reponse.status === 400) {
+      console.log(e)
+
+      if(e.response.status === 400) {
         setError(e.response.data.message)
+        setMessageForm(true);
+        await disableAlert()
+      }
+
+      if(e.response.status === 401) {
+        setMessageAlert('Login invalid')
         setAlert(true);
         await disableAlert()
       }
@@ -54,19 +66,26 @@ export function useLogin() {
 
     } finally {
       setIsSubmitting(false);
-      clearInputs()
+      await clearInputs()
+      await disableMessageForm()
     }
   }
 
   async function disableAlert() {
-      setTimeout(() => {
-          setAlert(false)
-      }, 5000)
+    setTimeout(() => {
+        setAlert(false)
+    }, 5000)
+  }
+
+  async function disableMessageForm() {
+    setTimeout(() => {
+        setMessageForm(false)
+    }, 5000)
   }
 
   async function clearInputs() {
-      setEmail('')
-      setPassword('')
+    setEmail('')
+    setPassword('')
   }
 
   return {
@@ -75,7 +94,9 @@ export function useLogin() {
     password,
     setPassword,
     handleSubmit,
+    setMessageForm,
     isSubmitting,
+    messageForm,
     error,
     alert,
     messageAlert

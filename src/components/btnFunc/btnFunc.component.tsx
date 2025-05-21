@@ -2,8 +2,8 @@ import { clsx } from "clsx";
 import Types from './typesBtn'
 
 export default function BtnFunc(props: Types) {
-  const bg: string = `bg-${props.color}`;
-  const hover: string = `hover:bg-${props.colorHover||'white'} hover:text-${props.colorTextHover||'black'}`;
+  const bg: string = `border-${props.color} bg-transparent`;
+  const hover: string = `hover:bg-white hover:text-black`;
   const padding: string = `p-${props.padding||1}`;
 
   return (

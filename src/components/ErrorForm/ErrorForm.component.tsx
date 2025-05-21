@@ -9,7 +9,7 @@ export default function ErrorForm(props: Types) {
             left: '50%',
             transform: 'translateX(-50%)',
           }} 
-          className={"bg-transparent p-1.5 border rounded w-[98%] "} >
+          className={"bg-transparent p-1.5 border rounded text-center w-[98%] "} >
             {
                 props.data.map((e, i) => {
                     return (
