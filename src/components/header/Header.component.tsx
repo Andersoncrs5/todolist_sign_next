@@ -1,3 +1,4 @@
+import { ReactNode } from "react";
 import Types from "./types";
 
 export default function Header(props: Types) {
@@ -6,9 +7,13 @@ export default function Header(props: Types) {
             <div className="w-2/10">
                 <h1>{props.title}</h1>
             </div>
-            <div className="w-6/10"></div>
-            <div className="w-2/10 text-center ">
-                {props.children}
+            <div className="w-4/10"></div>
+            <div className="w-4/10 text-center ">
+                {props.childrens.length != 0 && 
+                    props.childrens.map((e: ReactNode) => {
+                        return e
+                    })
+                }
             </div>
         </div>
     );

@@ -16,8 +16,10 @@ export default function Register() {
     >
       <div className="flex items-center justify-center min-h-screen ">
         <div className="text-center shadow-md w-full max-w-md ">
+          
           {alert && <Alert name={messageAlert} /> }
           {messageForm && <ErrorForm data={error} /> }
+          
           <form onSubmit={handleSubmit}>
             <div className="p-3 border rounded">
               <CustomInput 
